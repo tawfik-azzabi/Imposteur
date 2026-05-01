@@ -193,15 +193,42 @@ p{font-size:14px;line-height:1.6;color:var(--muted);font-weight:300;}
 .res-imp-name{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;}
 .res-imp-sc{font-size:11px;color:var(--muted);margin-top:1px;}
 
-/* vote rows inside results */
-.res-vote-list{display:flex;flex-direction:column;gap:5px;overflow:hidden;}
-.res-vrow{display:flex;align-items:center;gap:8px;}
-.res-vav{width:26px;height:26px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:9px;font-weight:800;flex-shrink:0;}
-.res-vav.ii{background:var(--da-dim);border-color:var(--danger);}
-.res-vname{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.res-vcount{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;flex-shrink:0;min-width:18px;text-align:right;}
-.res-bar-w{flex:1.2;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
-.res-bar{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.16,1,.3,1);}
+/* ── PODIUM ── */
+.podium-wrap{
+  display:flex; align-items:flex-end; justify-content:center;
+  gap:6px; width:100%; height:100%;
+  padding: 4px 0 0;
+}
+.pod-col{
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:flex-end; gap:5px;
+  min-width:0;
+}
+.pod-name{
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+  color:var(--text); text-align:center;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  width:100%; line-height:1.2;
+}
+.pod-count{
+  font-family:'Syne',sans-serif; font-size:18px; font-weight:800;
+  line-height:1; color:var(--text);
+}
+.pod-bar{
+  width:100%; border-radius:8px 8px 4px 4px;
+  /* height set by JS via CSS custom property */
+  min-height:6px;
+  transition: height .7s cubic-bezier(.16,1,.3,1);
+  background: rgba(240,238,232,.18);
+}
+.pod-bar.imp { background: var(--danger); box-shadow: 0 0 16px rgba(255,77,109,.4); }
+.pod-bar.top { background: var(--accent); box-shadow: 0 0 16px rgba(232,255,71,.3); }
+.pod-label{
+  font-family:'Syne',sans-serif; font-size:9px; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:var(--danger); margin-top:2px; text-align:center;
+  line-height:1;
+}
 
 /* winner badge */
 .win-badge{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:100px;font-family:'Syne',sans-serif;font-weight:700;}
@@ -541,10 +568,10 @@ p{font-size:14px;line-height:1.6;color:var(--muted);font-weight:300;}
       <span class="res-lbl">Le mot secret</span>
       <div class="ft-box" id="fw-res-word"><span class="ft-text" id="ft-res-word" style="color:var(--safe)">—</span></div>
     </div>
-    <!-- Votes — takes 2× space -->
-    <div class="res-card" style="flex:2">
+    <!-- Votes — podium -->
+    <div class="res-card" style="flex:2.2;padding:10px 10px 8px;">
       <span class="res-lbl">Votes</span>
-      <div class="res-vote-list" id="res-vote-list"></div>
+      <div class="podium-wrap" id="res-podium"></div>
     </div>
     <!-- Winner badge — fitted text -->
     <div class="res-card" style="align-items:center;justify-content:center;flex-direction:row;flex:0.8">
@@ -1013,39 +1040,83 @@ function showResults(){
   setFt('ft-res-title','La vérité éclate !');
   setFt('ft-res-word',G.word);
 
-  const list=document.getElementById('res-vote-list');list.innerHTML='';
-  const maxV=G.n>1?G.n-1:1;
-  G.players.map((name,i)=>({name,i,v:vc[i]||0})).sort((a,b)=>b.v-a.v).forEach(({name,i,v})=>{
-    const isI=i===G.impIdx;const pct=(v/maxV)*100;
-    const el=document.createElement('div');el.className='res-vrow';
-    el.innerHTML=`
-      <div class="res-vav${isI?' ii':''}">${init(name)}</div>
-      <span class="res-vname">${name}${isI?' 🕵️':''}</span>
-      <div class="res-bar-w"><div class="res-bar" style="width:0%;background:${isI?'var(--danger)':'rgba(240,238,232,.22)'}"></div></div>
-      <span class="res-vcount">${v}</span>`;
-    list.appendChild(el);
-    setTimeout(()=>{el.querySelector('.res-bar').style.width=pct+'%';},80);
+  // ── PODIUM ──────────────────────────────────────────────
+  // Sort players by votes descending to find max, then keep
+  // original order for display (left → right = player order)
+  const allVotes = G.players.map((_,i)=>vc[i]||0);
+  const maxVc = Math.max(...allVotes, 1); // avoid /0
+
+  const podium = document.getElementById('res-podium');
+  podium.innerHTML = '';
+
+  // We display all players as columns, ordered left→right by player index
+  // Max bar height is 100% of the flex container — we use % of maxVotes
+  G.players.forEach((name, i) => {
+    const v    = vc[i] || 0;
+    const isI  = i === G.impIdx;
+    // height percent relative to max: min 4px shown even at 0
+    const pct  = maxVc > 0 ? (v / maxVc) * 100 : 0;
+
+    // Is this player the most-voted (could be tied)?
+    const isTop = v === maxVc && v > 0;
+
+    const col = document.createElement('div');
+    col.className = 'pod-col';
+
+    // count above bar
+    const countEl = document.createElement('div');
+    countEl.className = 'pod-count';
+    countEl.textContent = v;
+
+    // the bar
+    const bar = document.createElement('div');
+    bar.className = 'pod-bar' + (isI ? ' imp' : isTop ? ' top' : '');
+    bar.style.height = '0px'; // start at 0, animate in
+
+    // name label under bar
+    const nameEl = document.createElement('div');
+    nameEl.className = 'pod-name';
+    nameEl.textContent = name;
+
+    // optional "IMPOSTEUR" tag
+    const tagEl = document.createElement('div');
+    tagEl.className = 'pod-label';
+    tagEl.textContent = isI ? '🕵️' : '';
+
+    col.appendChild(countEl);
+    col.appendChild(bar);
+    col.appendChild(nameEl);
+    col.appendChild(tagEl);
+    podium.appendChild(col);
+
+    // Animate bar height after layout — height is a % of the podium container
+    // We compute actual px from parent height after next frame
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        const containerH = podium.clientHeight - 40; // leave room for name+count
+        const targetH = Math.max(4, Math.round((pct / 100) * containerH));
+        bar.style.height = targetH + 'px';
+      });
+    });
   });
 
-  // Winner
-  const maxVc=Math.max(...Object.values(vc));
-  const top=Object.entries(vc).filter(([,v])=>v===maxVc).map(([k])=>+k);
-  const caught=top.length===1&&top[0]===G.impIdx;
-  const badge=document.getElementById('res-badge');
-  badge.className='win-badge '+(caught?'team':'impo');
-  // Use a larger text for the badge
-  const btxt=caught?'🎉 Les joueurs gagnent !':'😈 L\'imposteur gagne !';
-  document.getElementById('res-badge-txt').textContent=btxt;
-  // Fit badge text to badge width
+  // ── WINNER BADGE ────────────────────────────────────────
+  const maxV2 = Math.max(...Object.values(vc));
+  const top = Object.entries(vc).filter(([,v])=>v===maxV2).map(([k])=>+k);
+  const caught = top.length===1 && top[0]===G.impIdx;
+  const badge = document.getElementById('res-badge');
+  badge.className = 'win-badge ' + (caught ? 'team' : 'impo');
+  const btxt = caught ? '🎉 Les joueurs gagnent !' : '😈 L\'imposteur gagne !';
+  document.getElementById('res-badge-txt').textContent = btxt;
   requestAnimationFrame(()=>{
-    const bspan=badge.querySelector('#res-badge-txt');
+    const bspan = badge.querySelector('#res-badge-txt');
     if(!bspan)return;
-    const avail=badge.clientWidth-28; // minus padding
-    let sz=18,best=13;
-    bspan.style.fontSize=sz+'px';
+    const avail = badge.clientWidth - 28;
+    let sz=18, best=13;
+    bspan.style.fontSize = sz+'px';
     if(bspan.scrollWidth<=avail){best=sz;}
     else{let lo=11,hi=sz-1;while(lo<=hi){const m=(lo+hi)>>1;bspan.style.fontSize=m+'px';if(bspan.scrollWidth<=avail){best=m;lo=m+1;}else{hi=m-1;}}}
-    bspan.style.fontSize=best+'px';
+    bspan.style.fontSize = best+'px';
   });
 
   showScreen('screen-results');
