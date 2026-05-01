@@ -8,582 +8,731 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>IMPOSTEUR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #0d0d0f; --surface: #16161a; --surface2: #1e1e24;
-    --border: rgba(255,255,255,0.07); --text: #f0eee8; --muted: rgba(240,238,232,0.45);
-    --accent: #e8ff47; --accent-dim: rgba(232,255,71,0.12);
-    --danger: #ff4d6d; --danger-dim: rgba(255,77,109,0.12);
-    --safe: #47ffb8; --safe-dim: rgba(71,255,184,0.12);
-    --purple: #b47fff; --purple-dim: rgba(180,127,255,0.13);
-    --orange: #ff9f47; --orange-dim: rgba(255,159,71,0.13);
-    --radius: 20px; --radius-sm: 12px;
-  }
-  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
-  #app { height: 100dvh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
-  #app::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: 0.6; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0d0d0f; --surface: #16161a; --surface2: #1e1e24;
+  --border: rgba(255,255,255,0.07); --text: #f0eee8; --muted: rgba(240,238,232,0.42);
+  --accent: #e8ff47; --accent-dim: rgba(232,255,71,0.11);
+  --danger: #ff4d6d; --danger-dim: rgba(255,77,109,0.12);
+  --safe: #47ffb8; --safe-dim: rgba(71,255,184,0.12);
+  --purple: #b47fff; --purple-dim: rgba(180,127,255,0.13);
+  --orange: #ff9f47; --orange-dim: rgba(255,159,71,0.13);
+  --radius: 18px; --radius-sm: 11px;
+}
+html, body {
+  height: 100%; overflow: hidden;
+  background: var(--bg); color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+#app {
+  height: 100dvh;
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+}
+#app::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 999; opacity: 0.5;
+}
 
-  /* SCREENS */
-  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 24px 22px 32px; opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity 0.32s ease, transform 0.32s ease; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  .screen.active { opacity: 1; transform: translateY(0); pointer-events: all; }
+/* ── SCREENS ─────────────────────────────── */
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: 20px 20px 28px;
+  opacity: 0; transform: translateY(14px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
+.screen.active { opacity: 1; transform: translateY(0); pointer-events: all; }
 
-  /* TYPOGRAPHY */
-  .label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
-  h2 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(26px, 8vw, 40px); line-height: 1.05; letter-spacing: -0.02em; }
-  p { font-size: 15px; line-height: 1.6; color: var(--muted); font-weight: 300; }
+/* ── TYPOGRAPHY ──────────────────────────── */
+.label {
+  font-family: 'Syne', sans-serif; font-size: 10px;
+  font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted);
+}
+h2 {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: clamp(24px, 7vw, 36px);
+  line-height: 1.05; letter-spacing: -0.02em;
+  white-space: nowrap; /* prevents wrapping on result screen */
+}
+p { font-size: 14px; line-height: 1.6; color: var(--muted); font-weight: 300; }
 
-  /* LOGO / TITLE */
-  .game-logo { display: flex; align-items: center; gap: 14px; }
-  .logo-icon {
-    width: 48px; height: 48px; flex-shrink: 0;
-    background: var(--accent); border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 30px rgba(232,255,71,0.3);
-  }
-  .game-title {
-    font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: clamp(32px, 9.5vw, 52px);
-    letter-spacing: -0.04em; line-height: 1;
-    white-space: nowrap;
-  }
-  .game-title span { color: var(--accent); }
+/* ── LOGO / TITLE ────────────────────────── */
+.game-logo { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+  /* fixed small size so title gets max space */
+  width: 44px; height: 44px; flex-shrink: 0;
+  background: var(--accent); border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 28px rgba(232,255,71,0.32);
+}
+.game-title {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  /* Fits in ~320px after 44px icon + 12px gap + 20px padding×2 = 244px available */
+  font-size: clamp(28px, 8.5vw, 46px);
+  letter-spacing: -0.045em; line-height: 1;
+  white-space: nowrap; overflow: hidden;
+}
+.game-title span { color: var(--accent); }
 
-  /* BUTTONS */
-  .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 17px 22px; border: none; border-radius: var(--radius); font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.02em; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; -webkit-tap-highlight-color: transparent; }
-  .btn:active { transform: scale(0.97); }
-  .btn-primary { background: var(--accent); color: #0d0d0f; box-shadow: 0 0 36px rgba(232,255,71,0.22); }
-  .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-  .btn-danger { background: var(--danger); color: #fff; box-shadow: 0 0 36px rgba(255,77,109,0.22); }
-  .btn-purple { background: var(--purple); color: #0d0d0f; box-shadow: 0 0 30px rgba(180,127,255,0.25); }
-  .btn-orange { background: var(--orange); color: #0d0d0f; box-shadow: 0 0 30px rgba(255,159,71,0.22); }
-  .btn[disabled] { opacity: 0.35; pointer-events: none; }
+/* ── BUTTONS ─────────────────────────────── */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  width: 100%; padding: 15px 20px; border: none; border-radius: var(--radius);
+  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  letter-spacing: 0.01em; cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--accent); color: #0d0d0f; box-shadow: 0 0 32px rgba(232,255,71,0.2); }
+.btn-ghost   { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-danger  { background: var(--danger); color: #fff; box-shadow: 0 0 32px rgba(255,77,109,0.2); }
+.btn-purple  { background: var(--purple); color: #0d0d0f; box-shadow: 0 0 28px rgba(180,127,255,0.22); }
+.btn[disabled] { opacity: 0.35; pointer-events: none; }
 
-  /* STEPPER */
-  .stepper { display: flex; align-items: center; background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
-  .stepper button { background: none; border: none; color: var(--text); font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; width: 58px; height: 58px; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background 0.15s; flex-shrink: 0; }
-  .stepper button:active { background: var(--border); }
-  .stepper .val { flex: 1; text-align: center; font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; }
+/* ── STEPPER ─────────────────────────────── */
+.stepper {
+  display: flex; align-items: center;
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); overflow: hidden;
+}
+.stepper button {
+  background: none; border: none; color: var(--text);
+  font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700;
+  width: 60px; height: 60px; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.13s; flex-shrink: 0;
+}
+.stepper button:active { background: var(--border); }
+.stepper .val {
+  flex: 1; text-align: center;
+  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+}
 
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
 
-  /* PLAYER NAME INPUTS */
-  .name-inputs { display: flex; flex-direction: column; gap: 8px; }
-  .name-row {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--surface2); border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm); padding: 0 14px;
-    transition: border-color 0.2s;
-  }
-  .name-row:focus-within { border-color: var(--accent); }
-  .name-num { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; color: var(--muted); width: 20px; flex-shrink: 0; }
-  .name-input { flex: 1; background: none; border: none; outline: none; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); padding: 14px 0; -webkit-appearance: none; }
-  .name-input::placeholder { color: var(--muted); font-weight: 400; font-size: 14px; }
+/* ── POPUP (names) ───────────────────────── */
+#popup-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 200; display: none; align-items: flex-end;
+  backdrop-filter: blur(4px);
+}
+#popup-overlay.open { display: flex; }
+#popup-sheet {
+  background: var(--surface); width: 100%;
+  border-radius: 24px 24px 0 0;
+  padding: 24px 20px 36px;
+  max-height: 82dvh; overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(.16,1,.3,1);
+}
+#popup-overlay.open #popup-sheet { transform: translateY(0); }
+.popup-handle {
+  width: 36px; height: 4px; background: var(--border);
+  border-radius: 2px; margin: 0 auto 20px;
+}
+.name-inputs { display: flex; flex-direction: column; gap: 8px; }
+.name-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0 14px;
+  transition: border-color 0.2s;
+}
+.name-row:focus-within { border-color: var(--accent); }
+.name-num { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; color: var(--muted); width: 18px; flex-shrink: 0; }
+.name-input {
+  flex: 1; background: none; border: none; outline: none;
+  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text);
+  padding: 13px 0; -webkit-appearance: none;
+}
+.name-input::placeholder { color: var(--muted); font-weight: 400; font-size: 14px; }
 
-  /* MODE SELECTOR */
-  .mode-cards { display: flex; flex-direction: column; gap: 8px; }
-  .mode-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--surface2); cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
-  .mode-card:active { transform: scale(0.98); }
-  .mode-card.sel-libre { border-color: var(--orange); background: var(--orange-dim); }
-  .mode-card.sel-classic { border-color: var(--accent); background: var(--accent-dim); }
-  .mode-card.sel-contraintes { border-color: var(--purple); background: var(--purple-dim); }
-  .mode-icon { font-size: 22px; flex-shrink: 0; line-height: 1.3; }
-  .mode-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; margin-bottom: 2px; color: var(--text); }
-  .mode-title.col-orange { color: var(--orange); }
-  .mode-title.col-accent { color: var(--accent); }
-  .mode-title.col-purple { color: var(--purple); }
-  .mode-desc { font-size: 11px; color: var(--muted); font-weight: 300; line-height: 1.5; }
+/* ── MODE SELECTOR ───────────────────────── */
+.mode-cards { display: flex; flex-direction: column; gap: 7px; }
+.mode-card {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 13px 15px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border); background: var(--surface2);
+  cursor: pointer; transition: all 0.13s; -webkit-tap-highlight-color: transparent;
+}
+.mode-card:active { transform: scale(0.98); }
+.mode-card.sel-libre        { border-color: var(--orange); background: var(--orange-dim); }
+.mode-card.sel-classic      { border-color: var(--accent); background: var(--accent-dim); }
+.mode-card.sel-contraintes  { border-color: var(--purple); background: var(--purple-dim); }
+.mode-icon { font-size: 20px; flex-shrink: 0; line-height: 1.4; }
+.mode-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; margin-bottom: 2px; color: var(--text); }
+.mode-title.col-orange  { color: var(--orange); }
+.mode-title.col-accent  { color: var(--accent); }
+.mode-title.col-purple  { color: var(--purple); }
+.mode-desc { font-size: 11px; color: var(--muted); font-weight: 300; line-height: 1.45; }
 
-  /* CHIPS */
-  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
-  .chip { padding: 7px 13px; border-radius: 100px; border: 1.5px solid var(--border); background: var(--surface2); color: var(--muted); font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
-  .chip.selected { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+/* ── CHIPS ───────────────────────────────── */
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  padding: 7px 12px; border-radius: 100px;
+  border: 1.5px solid var(--border); background: var(--surface2);
+  color: var(--muted); font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  cursor: pointer; transition: all 0.13s; -webkit-tap-highlight-color: transparent;
+}
+.chip.selected { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
 
-  /* DOTS */
-  .progress-dots { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
-  .dot.done { background: var(--accent); width: 18px; border-radius: 3px; }
-  .dot.active { background: var(--text); }
+/* ── DOTS ────────────────────────────────── */
+.progress-dots { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+.dot.done   { background: var(--accent); width: 18px; border-radius: 3px; }
+.dot.active { background: var(--text); }
 
-  /* ROLE TIMER */
-  .timer-wrap { position: relative; width: 110px; height: 110px; margin: 0 auto; }
-  .timer-svg { transform: rotate(-90deg); width: 110px; height: 110px; }
-  .timer-bg { fill: none; stroke: var(--border); stroke-width: 4; }
-  .timer-arc { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
-  .timer-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800; }
+/* ── ROLE TIMER ──────────────────────────── */
+.timer-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto; }
+.timer-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
+.timer-bg  { fill: none; stroke: var(--border); stroke-width: 4; }
+.timer-arc { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
+.timer-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
 
-  /* ROLE BOX */
-  .role-box { border-radius: var(--radius); padding: 28px 22px; text-align: center; }
-  .role-box.word { background: var(--safe-dim); border: 1.5px solid var(--safe); }
-  .role-box.impostor { background: var(--danger-dim); border: 1.5px solid var(--danger); }
-  .role-box .rl { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
-  .role-box.word .rl { color: var(--safe); }
-  .role-box.impostor .rl { color: var(--danger); }
-  .role-box .rv { font-family: 'Syne', sans-serif; font-size: clamp(28px, 9vw, 44px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
-  .role-box.word .rv { color: var(--safe); }
-  .role-box.impostor .rv { color: var(--danger); }
-  .role-sub { margin-top: 10px; font-size: 13px; color: var(--muted); font-weight: 300; }
+/* ── ROLE BOX — fully responsive ────────── */
+.role-screen-body {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  flex: 1; gap: 20px; width: 100%;
+}
+.role-box {
+  border-radius: var(--radius); padding: 24px 20px;
+  text-align: center; width: 100%;
+}
+.role-box.word     { background: var(--safe-dim);   border: 1.5px solid var(--safe); }
+.role-box.impostor { background: var(--danger-dim); border: 1.5px solid var(--danger); }
+.role-box .rl {
+  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 10px;
+}
+.role-box.word     .rl { color: var(--safe); }
+.role-box.impostor .rl { color: var(--danger); }
+/* The key: use viewport-clamped size + allow wrapping INSIDE the box only */
+.role-box .rv {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(22px, 8vw, 40px);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1.1;
+  word-break: break-word; hyphens: auto;
+}
+.role-box.word     .rv { color: var(--safe); }
+.role-box.impostor .rv { color: var(--danger); }
+.role-sub { margin-top: 8px; font-size: 12px; color: var(--muted); font-weight: 300; }
 
-  /* HOT SEAT RING */
-  .hs-ring-wrap { position: relative; width: 170px; height: 170px; margin: 0 auto; }
-  .hs-ring-svg { transform: rotate(-90deg); width: 170px; height: 170px; }
-  .hs-bg { fill: none; stroke: var(--border); stroke-width: 6; }
-  .hs-arc { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.5s; }
-  .hs-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
-  .hs-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--accent-dim); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; transition: all 0.3s; }
-  .hs-secs { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--muted); }
+/* ── HOT SEAT RING ───────────────────────── */
+.hs-ring-wrap { position: relative; width: 160px; height: 160px; margin: 0 auto; }
+.hs-ring-svg { transform: rotate(-90deg); width: 160px; height: 160px; }
+.hs-bg  { fill: none; stroke: var(--border); stroke-width: 6; }
+.hs-arc { fill: none; stroke: var(--accent); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.5s; }
+.hs-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.hs-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--accent-dim); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; transition: all 0.3s; }
+.hs-secs { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--muted); }
 
-  /* QUEUE */
-  .queue { display: flex; flex-direction: column; gap: 5px; }
-  .q-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 9px; background: var(--surface); border: 1px solid var(--border); transition: all 0.25s; }
-  .q-row.current { background: var(--accent-dim); border-color: var(--accent); }
-  .q-row.done { opacity: 0.3; }
-  .q-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11px; color: var(--muted); width: 16px; text-align: center; }
-  .q-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; flex: 1; }
-  .q-tag { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.06em; }
+/* ── QUEUE ───────────────────────────────── */
+.queue { display: flex; flex-direction: column; gap: 5px; }
+.q-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 9px; background: var(--surface); border: 1px solid var(--border); transition: all 0.22s; }
+.q-row.current { background: var(--accent-dim); border-color: var(--accent); }
+.q-row.done    { opacity: 0.3; }
+.q-num  { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11px; color: var(--muted); width: 16px; text-align: center; }
+.q-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; flex: 1; }
+.q-tag  { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.06em; }
 
-  /* LIBRE TIMER */
-  .libre-big-timer { text-align: center; }
-  .libre-secs { font-family: 'Syne', sans-serif; font-size: clamp(64px, 20vw, 100px); font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--text); transition: color 0.5s; }
-  .libre-secs.urgent { color: var(--danger); }
-  .libre-bar-wrap { width: 100%; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-top: 12px; }
-  .libre-bar { height: 100%; border-radius: 3px; background: var(--orange); transition: width 1s linear, background 0.5s; }
+/* ── LIBRE TIMER ─────────────────────────── */
+.libre-big { text-align: center; }
+.libre-secs { font-family: 'Syne', sans-serif; font-size: clamp(52px,16vw,80px); font-weight: 800; letter-spacing: -0.04em; line-height: 1; transition: color 0.4s; }
+.libre-secs.urgent { color: var(--danger); }
+.libre-bar-wrap { width: 100%; height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+.libre-bar { height: 100%; border-radius: 2px; background: var(--orange); transition: width 1s linear, background 0.4s; }
 
-  /* CONTRAINTE CARD */
-  .ct-card { border-radius: var(--radius); padding: 22px 18px; background: var(--purple-dim); border: 1.5px solid var(--purple); text-align: center; }
-  .ct-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--purple); margin-bottom: 8px; display: block; }
-  .ct-emoji { font-size: 40px; line-height: 1; margin-bottom: 8px; }
-  .ct-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(16px, 5vw, 22px); color: var(--text); line-height: 1.2; }
-  .ct-sub { margin-top: 7px; font-size: 12px; color: var(--muted); font-weight: 300; line-height: 1.5; }
+/* ── CONTRAINTE CARD ─────────────────────── */
+.ct-card { border-radius: var(--radius); padding: 20px 16px; background: var(--purple-dim); border: 1.5px solid var(--purple); text-align: center; }
+.ct-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--purple); margin-bottom: 7px; display: block; }
+.ct-emoji { font-size: 36px; line-height: 1; margin-bottom: 7px; }
+.ct-text  { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(15px,5vw,21px); color: var(--text); line-height: 1.2; }
+.ct-sub   { margin-top: 6px; font-size: 11px; color: var(--muted); font-weight: 300; line-height: 1.5; }
 
-  /* VOTE */
-  .vote-list { display: flex; flex-direction: column; gap: 9px; }
-  .vote-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
-  .vote-item:active { transform: scale(0.98); }
-  .vote-item.selected { border-color: var(--accent); background: var(--accent-dim); }
-  .v-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; flex-shrink: 0; }
-  .vote-item.selected .v-avatar { background: var(--accent); color: #0d0d0f; border-color: var(--accent); }
-  .v-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; flex: 1; }
-  .v-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
-  .vote-item.selected .v-check { background: var(--accent); border-color: var(--accent); color: #0d0d0f; }
+/* ── VOTE ────────────────────────────────── */
+.vote-list { display: flex; flex-direction: column; gap: 8px; }
+.vote-item { display: flex; align-items: center; gap: 13px; padding: 13px 16px; background: var(--surface2); border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.13s; -webkit-tap-highlight-color: transparent; }
+.vote-item:active { transform: scale(0.98); }
+.vote-item.selected { border-color: var(--accent); background: var(--accent-dim); }
+.v-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; flex-shrink: 0; }
+.vote-item.selected .v-avatar { background: var(--accent); color: #0d0d0f; border-color: var(--accent); }
+.v-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; flex: 1; }
+.v-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.13s; }
+.vote-item.selected .v-check { background: var(--accent); border-color: var(--accent); color: #0d0d0f; }
 
-  /* RESULTS */
-  .res-list { display: flex; flex-direction: column; gap: 7px; }
-  .res-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); }
-  .res-row.imp { border-color: var(--danger); background: var(--danger-dim); }
-  .res-votes { margin-left: auto; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; }
-  .res-bar-wrap { width: 100%; height: 3px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
-  .res-bar { height: 100%; border-radius: 2px; transition: width 0.8s cubic-bezier(.16,1,.3,1); }
-  .win-badge { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 100px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; }
-  .win-badge.team { background: var(--safe-dim); color: var(--safe); border: 1px solid var(--safe); }
-  .win-badge.imp { background: var(--danger-dim); color: var(--danger); border: 1px solid var(--danger); }
+/* ── RESULTS — fixed single-screen layout ── */
+#screen-results {
+  /* Override default padding/overflow to be a fixed non-scrolling screen */
+  overflow: hidden;
+  padding: 16px 18px 18px;
+  display: flex; flex-direction: column; gap: 0;
+}
+.res-header { flex-shrink: 0; margin-bottom: 10px; }
+.res-header .res-title {
+  font-family: 'Syne', sans-serif; font-weight: 800;
+  font-size: clamp(22px, 7vw, 34px);
+  letter-spacing: -0.03em; line-height: 1;
+  white-space: nowrap;
+}
+/* A grid of 5 rows that fills available height equally */
+.res-grid {
+  flex: 1; display: flex; flex-direction: column; gap: 7px;
+  min-height: 0; /* allows flex children to shrink below content size */
+}
+.res-card {
+  flex: 1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 14px;
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: 0;
+}
+.res-card.imp-card { border-color: var(--danger); background: var(--danger-dim); }
+.res-card-label { display: block; font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
 
-  .glow { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: -1; }
-  #blank-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: none; align-items: center; justify-content: center; }
-  #blank-overlay.show { display: flex; }
+/* impostor row inside card */
+.res-imp-row { display: flex; align-items: center; gap: 12px; }
+.res-avatar  { width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; background: var(--danger-dim); border: 1.5px solid var(--danger); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; }
+.res-imp-name  { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; }
+.res-imp-score { font-size: 11px; color: var(--muted); margin-top: 1px; }
+/* secret word */
+.res-word { font-family: 'Syne', sans-serif; font-size: clamp(18px,6vw,26px); font-weight: 800; color: var(--safe); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  .spacer { flex: 1; }
-  .g6{height:6px}.g8{height:8px}.g12{height:12px}.g16{height:16px}.g20{height:20px}.g24{height:24px}.g28{height:28px}
+/* vote list inside card */
+.res-vote-list { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+.res-vote-row  { display: flex; align-items: center; gap: 9px; }
+.res-v-av  { width: 24px; height: 24px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 800; flex-shrink: 0; }
+.res-v-av.imp { background: var(--danger-dim); border-color: var(--danger); }
+.res-v-name  { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.res-v-count { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; flex-shrink: 0; }
+.res-bar-wrap { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.res-bar { height: 100%; border-radius: 2px; transition: width 0.8s cubic-bezier(.16,1,.3,1); }
 
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
-  .pulse { animation: pulse 1.4s ease-in-out infinite; }
-  @keyframes pop { 0%{transform:scale(0.85);opacity:0} 70%{transform:scale(1.04)} 100%{transform:scale(1);opacity:1} }
-  .pop { animation: pop 0.4s cubic-bezier(.16,1,.3,1) forwards; }
-  @keyframes countUp { from{transform:scale(1.25);opacity:0} to{transform:scale(1);opacity:1} }
-  .count-anim { animation: countUp 0.22s ease forwards; }
-  @keyframes ringPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-  .ring-urgent .hs-arc { animation: ringPulse 0.7s ease-in-out infinite; }
-  @keyframes fadeNum { from{transform:translateY(-8px);opacity:0} to{transform:translateY(0);opacity:1} }
-  .fade-num { animation: fadeNum 0.2s ease forwards; }
+/* winner badge */
+.win-badge { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 100px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; }
+.win-badge.team { background: var(--safe-dim); color: var(--safe); border: 1px solid var(--safe); }
+.win-badge.imp  { background: var(--danger-dim); color: var(--danger); border: 1px solid var(--danger); }
+
+/* action row at bottom of results */
+.res-actions { flex-shrink: 0; display: flex; gap: 8px; margin-top: 10px; }
+.res-actions .btn { padding: 13px 16px; font-size: 14px; }
+
+/* ── MISC ────────────────────────────────── */
+.glow { position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none; z-index: -1; }
+#blank-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: none; align-items: center; justify-content: center; }
+#blank-overlay.show { display: flex; }
+.spacer { flex: 1; }
+.g6{height:6px}.g8{height:8px}.g10{height:10px}.g12{height:12px}.g14{height:14px}.g16{height:16px}.g20{height:20px}.g24{height:24px}
+
+/* ── ANIMATIONS ──────────────────────────── */
+@keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:0.35} }
+.pulse { animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pop      { 0%{transform:scale(0.85);opacity:0} 70%{transform:scale(1.04)} 100%{transform:scale(1);opacity:1} }
+.pop { animation: pop 0.38s cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes countUp  { from{transform:scale(1.25);opacity:0} to{transform:scale(1);opacity:1} }
+.count-anim { animation: countUp 0.2s ease forwards; }
+@keyframes ringPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.ring-urgent .hs-arc { animation: ringPulse 0.7s ease-in-out infinite; }
+@keyframes sheetIn  { from{transform:translateY(100%)} to{transform:translateY(0)} }
 </style>
 </head>
 <body>
 <div id="app">
-  <div id="blank-overlay"><span style="font-family:Syne,sans-serif;font-size:11px;color:rgba(240,238,232,0.18);font-weight:700;letter-spacing:0.1em">●</span></div>
 
-  <!-- ════════════════════════════════
-       HOME
-  ════════════════════════════════ -->
-  <div class="screen active" id="screen-home">
-    <div class="glow" style="width:260px;height:260px;background:rgba(232,255,71,0.07);top:-80px;left:-80px;"></div>
+<!-- BLANK OVERLAY -->
+<div id="blank-overlay"><span style="font-family:Syne,sans-serif;font-size:11px;color:rgba(240,238,232,0.16);font-weight:700;letter-spacing:.1em">●</span></div>
 
-    <!-- LOGO + TITLE -->
-    <div class="game-logo">
-      <div class="logo-icon">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <!-- Masque / visage mystérieux -->
-          <ellipse cx="14" cy="14" rx="11" ry="12" fill="#0d0d0f"/>
-          <ellipse cx="10" cy="12" rx="2.5" ry="3" fill="#e8ff47"/>
-          <ellipse cx="18" cy="12" rx="2.5" ry="3" fill="#e8ff47"/>
-          <path d="M10 19 Q14 22 18 19" stroke="#e8ff47" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-          <path d="M6 8 Q14 3 22 8" stroke="#e8ff47" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-        </svg>
-      </div>
-      <div class="game-title">IMPOST<span>EUR</span></div>
-    </div>
-
-    <div class="g8"></div>
-    <p style="font-size:13px">Un mot secret. Un traître parmi vous.<br>Démasquez-le avant qu'il vous piège.</p>
-    <div class="g20"></div>
-
-    <!-- JOUEURS -->
-    <span class="label">Joueurs</span>
-    <div class="g8"></div>
-    <div class="stepper">
-      <button id="btn-minus" onclick="changeCount(-1)" disabled>−</button>
-      <span class="val" id="player-count-display">4</span>
-      <button id="btn-plus" onclick="changeCount(1)">+</button>
-    </div>
+<!-- NAMES POPUP -->
+<div id="popup-overlay" onclick="popupBgClick(event)">
+  <div id="popup-sheet">
+    <div class="popup-handle"></div>
+    <span class="label">Prénoms des joueurs</span>
     <div class="g12"></div>
     <div class="name-inputs" id="name-inputs"></div>
-
-    <div class="g18" style="height:18px"></div>
-
-    <!-- MODE -->
-    <span class="label">Mode de jeu</span>
-    <div class="g8"></div>
-    <div class="mode-cards">
-      <div class="mode-card" id="mc-libre" onclick="selectMode('libre')">
-        <div class="mode-icon">💬</div>
-        <div>
-          <div class="mode-title" id="mt-libre">Discussion libre</div>
-          <div class="mode-desc">2 minutes chrono pour discuter librement, puis vote. Simple et direct.</div>
-        </div>
-      </div>
-      <div class="mode-card sel-classic" id="mc-classic" onclick="selectMode('classic')">
-        <div class="mode-icon">⚡</div>
-        <div>
-          <div class="mode-title col-accent" id="mt-classic">Hot Seat</div>
-          <div class="mode-desc">Chaque joueur a 15 secondes pour donner son indice. La pression monte.</div>
-        </div>
-      </div>
-      <div class="mode-card" id="mc-contraintes" onclick="selectMode('contraintes')">
-        <div class="mode-icon">🎲</div>
-        <div>
-          <div class="mode-title" id="mt-contraintes">Contraintes</div>
-          <div class="mode-desc">Une règle aléatoire s'impose à chaque round. Bluff garanti.</div>
-        </div>
-      </div>
-    </div>
-
     <div class="g16"></div>
-
-    <!-- THÈME -->
-    <span class="label">Thème du mot</span>
-    <div class="g8"></div>
-    <div class="chips" id="theme-chips">
-      <div class="chip selected" onclick="selectTheme(this,'libre')">🎲 Libre</div>
-      <div class="chip" onclick="selectTheme(this,'sport')">⚽ Sport</div>
-      <div class="chip" onclick="selectTheme(this,'cinema')">🎬 Cinéma</div>
-      <div class="chip" onclick="selectTheme(this,'cuisine')">🍕 Cuisine</div>
-      <div class="chip" onclick="selectTheme(this,'voyage')">✈️ Voyage</div>
-      <div class="chip" onclick="selectTheme(this,'musique')">🎵 Musique</div>
-      <div class="chip" onclick="selectTheme(this,'nature')">🌿 Nature</div>
-      <div class="chip" onclick="selectTheme(this,'tech')">💻 Tech</div>
-    </div>
-
-    <div class="spacer" style="min-height:16px"></div>
-    <div class="g16"></div>
-    <button class="btn btn-primary" onclick="startGame()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-      Démarrer la partie
-    </button>
+    <button class="btn btn-primary" onclick="closePopupAndStart()">Démarrer →</button>
   </div>
+</div>
 
-  <!-- ════════════════════════════════
-       ROLE INTRO
-  ════════════════════════════════ -->
-  <div class="screen" id="screen-reveal-intro">
-    <div class="glow" style="width:200px;height:200px;background:rgba(232,255,71,0.05);bottom:80px;right:-60px;"></div>
-    <div class="spacer"></div>
-    <div class="progress-dots" id="reveal-dots"></div>
-    <div class="g20"></div>
-    <span class="label" id="reveal-intro-label">Distribution des rôles</span>
-    <div class="g12"></div>
-    <h2 id="reveal-player-name">Joueur 1</h2>
-    <div class="g8"></div>
-    <p>Prends le téléphone et appuie quand tu es seul.</p>
-    <div class="g20"></div>
-    <div class="card" style="text-align:center">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(240,238,232,0.2)" stroke-width="1.5" style="margin:0 auto 10px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <p style="font-size:13px">Ton rôle est confidentiel.<br>Ne le montre à personne.</p>
-    </div>
-    <div class="spacer"></div>
-    <div class="g16"></div>
-    <button class="btn btn-primary" onclick="showRole()">Voir mon rôle</button>
-  </div>
+<!-- ══════════════════════════════════════════
+     HOME
+══════════════════════════════════════════ -->
+<div class="screen active" id="screen-home">
+  <div class="glow" style="width:240px;height:240px;background:rgba(232,255,71,0.07);top:-70px;left:-70px;"></div>
 
-  <!-- ════════════════════════════════
-       ROLE DISPLAY
-  ════════════════════════════════ -->
-  <div class="screen" id="screen-role">
-    <div class="spacer"></div>
-    <div class="timer-wrap">
-      <svg class="timer-svg" viewBox="0 0 110 110">
-        <circle class="timer-bg" cx="55" cy="55" r="50"/>
-        <circle class="timer-arc" id="role-timer-arc" cx="55" cy="55" r="50" stroke-dasharray="314.2" stroke-dashoffset="0"/>
+  <!-- LOGO + TITLE -->
+  <div class="game-logo">
+    <div class="logo-icon">
+      <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+        <ellipse cx="14" cy="14.5" rx="11" ry="11.5" fill="#0d0d0f"/>
+        <ellipse cx="10" cy="12.5" rx="2.4" ry="2.8" fill="#e8ff47"/>
+        <ellipse cx="18" cy="12.5" rx="2.4" ry="2.8" fill="#e8ff47"/>
+        <path d="M10.5 19.5 Q14 22.5 17.5 19.5" stroke="#e8ff47" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+        <path d="M6.5 8.5 Q14 4 21.5 8.5" stroke="#e8ff47" stroke-width="1.4" stroke-linecap="round" fill="none"/>
       </svg>
-      <div class="timer-text" id="role-timer-text">5</div>
     </div>
-    <div class="g24"></div>
-    <div id="role-box-container"></div>
-    <div class="spacer"></div>
-    <p style="text-align:center;font-size:13px" class="pulse">Mémorise bien…</p>
-    <div class="g20"></div>
+    <div class="game-title">IMPOST<span>EUR</span></div>
   </div>
 
-  <!-- ════════════════════════════════
-       PASS PHONE
-  ════════════════════════════════ -->
-  <div class="screen" id="screen-pass">
-    <div class="spacer"></div>
-    <div style="text-align:center">
-      <div style="font-size:60px;margin-bottom:14px">📱</div>
-      <h2>Passe le<br>téléphone</h2>
-      <div class="g12"></div>
-      <p id="pass-to-text">au joueur suivant</p>
-    </div>
-    <div class="spacer"></div>
-    <button class="btn btn-ghost" onclick="nextPlayer()">Joueur suivant →</button>
+  <div class="g8"></div>
+  <p style="font-size:13px">Un mot secret. Un traître parmi vous.<br>Démasquez-le avant qu'il vous piège.</p>
+  <div class="g16"></div>
+
+  <!-- JOUEURS -->
+  <span class="label">Nombre de joueurs</span>
+  <div class="g8"></div>
+  <div class="stepper">
+    <button id="btn-minus" onclick="changeCount(-1)" disabled>−</button>
+    <span class="val" id="player-count-display">4</span>
+    <button id="btn-plus" onclick="changeCount(1)">+</button>
   </div>
 
-  <!-- ════════════════════════════════
-       LIBRE DISCUSSION
-  ════════════════════════════════ -->
-  <div class="screen" id="screen-libre">
-    <div class="glow" style="width:200px;height:200px;background:rgba(255,159,71,0.06);top:30px;right:-60px;"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <span class="label" id="lb-round-label">Tour 1 · 3</span>
-      <span class="label" style="color:var(--orange)">💬 LIBRE</span>
-    </div>
-    <div class="g12"></div>
-    <h2>Discussion<br>libre !</h2>
-    <div class="g8"></div>
-    <p style="font-size:13px">Chacun donne ses indices à voix haute.<br>L'imposteur doit bluffer.</p>
-    <div class="g24"></div>
+  <div class="g16"></div>
 
-    <div class="libre-big-timer">
-      <div class="libre-secs" id="lb-secs">2:00</div>
-      <div class="libre-bar-wrap">
-        <div class="libre-bar" id="lb-bar" style="width:100%"></div>
+  <!-- MODE -->
+  <span class="label">Mode de jeu</span>
+  <div class="g8"></div>
+  <div class="mode-cards">
+    <div class="mode-card" id="mc-libre" onclick="selectMode('libre')">
+      <div class="mode-icon">💬</div>
+      <div>
+        <div class="mode-title" id="mt-libre">Discussion libre</div>
+        <div class="mode-desc">2 min chrono, discussion libre, puis vote.</div>
       </div>
     </div>
-
-    <div class="g20"></div>
-    <div class="card" style="padding:14px">
-      <span class="label" style="display:block;margin-bottom:8px">Ordre de passage</span>
-      <div class="queue" id="lb-queue"></div>
-    </div>
-
-    <div class="spacer"></div>
-    <div class="g16"></div>
-    <button class="btn btn-ghost" id="lb-next-btn" onclick="lbNextRound()" style="display:none">Tour suivant →</button>
-    <div class="g8" id="lb-gap" style="display:none"></div>
-    <button class="btn btn-primary" onclick="goToVote()">Passer au vote →</button>
-  </div>
-
-  <!-- ════════════════════════════════
-       HOT SEAT
-  ════════════════════════════════ -->
-  <div class="screen" id="screen-hotseat">
-    <div class="glow" style="width:200px;height:200px;background:rgba(232,255,71,0.05);top:30px;right:-60px;"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <span class="label" id="hs-round-label">Tour 1 · 3</span>
-      <span class="label" style="color:var(--accent)">⚡ HOT SEAT</span>
-    </div>
-    <div class="g12"></div>
-    <h2 id="hs-title">À toi<br>de parler !</h2>
-    <div class="g16"></div>
-
-    <div class="hs-ring-wrap" id="hs-ring-outer">
-      <svg class="hs-ring-svg" viewBox="0 0 170 170">
-        <circle class="hs-bg" cx="85" cy="85" r="76"/>
-        <circle class="hs-arc" id="hs-arc" cx="85" cy="85" r="76" stroke-dasharray="477.5" stroke-dashoffset="0"/>
-      </svg>
-      <div class="hs-inner">
-        <div class="hs-avatar" id="hs-avatar">J1</div>
-        <div class="hs-secs" id="hs-secs">15s</div>
+    <div class="mode-card sel-classic" id="mc-classic" onclick="selectMode('classic')">
+      <div class="mode-icon">⚡</div>
+      <div>
+        <div class="mode-title col-accent" id="mt-classic">Hot Seat</div>
+        <div class="mode-desc">15 secondes par joueur. La pression monte.</div>
       </div>
     </div>
-
-    <div class="g16"></div>
-    <div class="card" style="padding:14px">
-      <span class="label" style="display:block;margin-bottom:8px">File d'attente</span>
-      <div class="queue" id="hs-queue"></div>
-    </div>
-
-    <div class="spacer"></div>
-    <div class="g16"></div>
-    <button class="btn btn-primary" id="hs-skip-btn" onclick="hsSkip()">Joueur suivant →</button>
-    <div class="g8" id="hs-gap2" style="display:none"></div>
-    <button class="btn btn-ghost" id="hs-vote-btn" onclick="goToVote()" style="display:none">Passer au vote →</button>
-  </div>
-
-  <!-- ════════════════════════════════
-       CONTRAINTES
-  ════════════════════════════════ -->
-  <div class="screen" id="screen-contraintes">
-    <div class="glow" style="width:200px;height:200px;background:rgba(180,127,255,0.07);top:30px;right:-60px;"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <span class="label" id="ct-round-label">Tour 1 · 3</span>
-      <span class="label" style="color:var(--purple)">🎲 CONTRAINTES</span>
-    </div>
-    <div class="g12"></div>
-    <h2>La règle<br>du round</h2>
-    <div class="g16"></div>
-
-    <div class="ct-card" id="ct-card">
-      <span class="ct-label">Contrainte du round</span>
-      <div class="ct-emoji" id="ct-emoji">🎨</div>
-      <div class="ct-text" id="ct-text">Décris avec une couleur</div>
-      <div class="ct-sub" id="ct-sub">Chaque indice doit être une couleur ou y faire référence.</div>
-    </div>
-
-    <div class="g12"></div>
-    <div class="card" style="padding:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span class="label">Temps de discussion</span>
-        <span class="label" id="ct-timer-label" style="color:var(--text)">60s</span>
-      </div>
-      <div style="width:100%;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden">
-        <div id="ct-bar" style="height:100%;border-radius:3px;background:var(--purple);transition:width 1s linear,background 0.5s;width:100%"></div>
+    <div class="mode-card" id="mc-contraintes" onclick="selectMode('contraintes')">
+      <div class="mode-icon">🎲</div>
+      <div>
+        <div class="mode-title" id="mt-contraintes">Contraintes</div>
+        <div class="mode-desc">Une règle aléatoire par round. Bluff garanti.</div>
       </div>
     </div>
+  </div>
 
-    <div class="g12"></div>
-    <div class="card" style="padding:14px">
-      <span class="label" style="display:block;margin-bottom:8px">Ordre de passage</span>
-      <div class="queue" id="ct-queue"></div>
+  <div class="g16"></div>
+
+  <!-- THÈME -->
+  <span class="label">Thème du mot</span>
+  <div class="g8"></div>
+  <div class="chips" id="theme-chips">
+    <div class="chip selected" onclick="selectTheme(this,'libre')">🎲 Libre</div>
+    <div class="chip" onclick="selectTheme(this,'sport')">⚽ Sport</div>
+    <div class="chip" onclick="selectTheme(this,'cinema')">🎬 Cinéma</div>
+    <div class="chip" onclick="selectTheme(this,'cuisine')">🍕 Cuisine</div>
+    <div class="chip" onclick="selectTheme(this,'voyage')">✈️ Voyage</div>
+    <div class="chip" onclick="selectTheme(this,'musique')">🎵 Musique</div>
+    <div class="chip" onclick="selectTheme(this,'nature')">🌿 Nature</div>
+    <div class="chip" onclick="selectTheme(this,'tech')">💻 Tech</div>
+  </div>
+
+  <div class="spacer" style="min-height:14px"></div>
+  <div class="g14"></div>
+  <button class="btn btn-primary" onclick="openNamesPopup()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    Saisir les prénoms & jouer
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ROLE INTRO
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-reveal-intro">
+  <div class="glow" style="width:180px;height:180px;background:rgba(232,255,71,0.05);bottom:80px;right:-50px;"></div>
+  <div class="spacer"></div>
+  <div class="progress-dots" id="reveal-dots"></div>
+  <div class="g20"></div>
+  <span class="label" id="reveal-intro-label">Distribution des rôles</span>
+  <div class="g10"></div>
+  <h2 id="reveal-player-name">Joueur 1</h2>
+  <div class="g8"></div>
+  <p>Prends le téléphone et appuie quand tu es seul.</p>
+  <div class="g16"></div>
+  <div class="card" style="text-align:center">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(240,238,232,0.18)" stroke-width="1.5" style="margin:0 auto 8px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <p style="font-size:12px">Ton rôle est confidentiel.<br>Ne le montre à personne.</p>
+  </div>
+  <div class="spacer"></div>
+  <div class="g14"></div>
+  <button class="btn btn-primary" onclick="showRole()">Voir mon rôle</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ROLE DISPLAY
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-role">
+  <div class="timer-wrap" style="margin-top:16px">
+    <svg class="timer-svg" viewBox="0 0 100 100">
+      <circle class="timer-bg" cx="50" cy="50" r="44"/>
+      <circle class="timer-arc" id="role-timer-arc" cx="50" cy="50" r="44" stroke-dasharray="276.5" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-text" id="role-timer-text">5</div>
+  </div>
+  <!-- Role box fills remaining space responsively -->
+  <div class="role-screen-body">
+    <div id="role-box-container" style="width:100%"></div>
+    <p style="font-size:12px;text-align:center" class="pulse">Mémorise bien…</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PASS PHONE
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-pass">
+  <div class="spacer"></div>
+  <div style="text-align:center">
+    <div style="font-size:56px;margin-bottom:12px">📱</div>
+    <h2>Passe le téléphone</h2>
+    <div class="g10"></div>
+    <p id="pass-to-text">au joueur suivant</p>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" onclick="nextPlayer()">Joueur suivant →</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LIBRE DISCUSSION
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-libre">
+  <div class="glow" style="width:180px;height:180px;background:rgba(255,159,71,0.06);top:20px;right:-50px;"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <span class="label" id="lb-round-label">Tour 1 · 3</span>
+    <span class="label" style="color:var(--orange)">💬 LIBRE</span>
+  </div>
+  <div class="g10"></div>
+  <h2>Discussion libre !</h2>
+  <div class="g6"></div>
+  <p style="font-size:13px">Chacun donne ses indices à voix haute.<br>L'imposteur doit bluffer.</p>
+  <div class="g20"></div>
+  <div class="libre-big">
+    <div class="libre-secs" id="lb-secs">2:00</div>
+    <div class="libre-bar-wrap"><div class="libre-bar" id="lb-bar" style="width:100%"></div></div>
+  </div>
+  <div class="g16"></div>
+  <div class="card" style="padding:13px">
+    <span class="label" style="display:block;margin-bottom:7px">Ordre de passage</span>
+    <div class="queue" id="lb-queue"></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="g14"></div>
+  <button class="btn btn-ghost" id="lb-next-btn" onclick="lbNextRound()" style="display:none">Tour suivant →</button>
+  <div class="g8" id="lb-gap" style="display:none"></div>
+  <button class="btn btn-primary" onclick="goToVote()">Passer au vote →</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HOT SEAT
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-hotseat">
+  <div class="glow" style="width:180px;height:180px;background:rgba(232,255,71,0.05);top:20px;right:-50px;"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <span class="label" id="hs-round-label">Tour 1 · 3</span>
+    <span class="label" style="color:var(--accent)">⚡ HOT SEAT</span>
+  </div>
+  <div class="g10"></div>
+  <h2 id="hs-title">À toi de parler !</h2>
+  <div class="g14"></div>
+  <div class="hs-ring-wrap" id="hs-ring-outer">
+    <svg class="hs-ring-svg" viewBox="0 0 160 160">
+      <circle class="hs-bg" cx="80" cy="80" r="70"/>
+      <circle class="hs-arc" id="hs-arc" cx="80" cy="80" r="70" stroke-dasharray="439.8" stroke-dashoffset="0"/>
+    </svg>
+    <div class="hs-inner">
+      <div class="hs-avatar" id="hs-avatar">J1</div>
+      <div class="hs-secs" id="hs-secs">15s</div>
     </div>
-
-    <div class="spacer"></div>
-    <div class="g16"></div>
-    <button class="btn btn-purple" id="ct-next-btn" onclick="ctNextRound()" style="display:none">Nouvelle règle · Tour suivant →</button>
-    <div class="g8" id="ct-gap" style="display:none"></div>
-    <button class="btn btn-ghost" onclick="goToVote()">Passer au vote →</button>
   </div>
+  <div class="g14"></div>
+  <div class="card" style="padding:13px">
+    <span class="label" style="display:block;margin-bottom:7px">File d'attente</span>
+    <div class="queue" id="hs-queue"></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="g14"></div>
+  <button class="btn btn-primary" id="hs-skip-btn" onclick="hsSkip()">Joueur suivant →</button>
+  <div class="g8" id="hs-gap2" style="display:none"></div>
+  <button class="btn btn-ghost" id="hs-vote-btn" onclick="goToVote()" style="display:none">Passer au vote →</button>
+</div>
 
-  <!-- ════════════════════════════════
-       VOTE INTRO
-  ════════════════════════════════ -->
-  <div class="screen" id="screen-vote-intro">
-    <div class="spacer"></div>
-    <div class="progress-dots" id="vote-dots"></div>
-    <div class="g20"></div>
-    <span class="label">Phase de vote</span>
-    <div class="g12"></div>
-    <h2 id="vote-intro-player">Joueur 1</h2>
-    <div class="g8"></div>
-    <p>C'est ton tour de voter.<br>Prends le téléphone secrètement.</p>
-    <div class="spacer"></div>
-    <div class="card" style="text-align:center">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(240,238,232,0.2)" stroke-width="1.5" style="margin:0 auto 8px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <p style="font-size:13px">Ton vote est secret.<br>Personne d'autre ne le verra.</p>
+<!-- ══════════════════════════════════════════
+     CONTRAINTES
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-contraintes">
+  <div class="glow" style="width:180px;height:180px;background:rgba(180,127,255,0.07);top:20px;right:-50px;"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <span class="label" id="ct-round-label">Tour 1 · 3</span>
+    <span class="label" style="color:var(--purple)">🎲 CONTRAINTES</span>
+  </div>
+  <div class="g10"></div>
+  <h2>La règle du round</h2>
+  <div class="g14"></div>
+  <div class="ct-card" id="ct-card">
+    <span class="ct-label">Contrainte</span>
+    <div class="ct-emoji" id="ct-emoji">🎨</div>
+    <div class="ct-text" id="ct-text">Décris avec une couleur</div>
+    <div class="ct-sub" id="ct-sub">Chaque indice doit être une couleur ou y faire référence.</div>
+  </div>
+  <div class="g12"></div>
+  <div class="card" style="padding:13px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+      <span class="label">Temps</span>
+      <span class="label" id="ct-timer-label" style="color:var(--text)">60s</span>
     </div>
-    <div class="spacer"></div>
-    <button class="btn btn-danger" onclick="showVoteScreen()">Voter maintenant</button>
-  </div>
-
-  <!-- ════════════════════════════════
-       VOTE
-  ════════════════════════════════ -->
-  <div class="screen" id="screen-vote">
-    <span class="label" id="vote-player-label">Joueur 1 · Ton vote</span>
-    <div class="g12"></div>
-    <h2>Qui est<br>l'imposteur ?</h2>
-    <div class="g16"></div>
-    <div class="vote-list" id="vote-list"></div>
-    <div class="spacer"></div>
-    <div class="g16"></div>
-    <button class="btn btn-primary" id="vote-confirm-btn" onclick="confirmVote()" disabled>Confirmer mon vote</button>
-  </div>
-
-  <!-- ════════════════════════════════
-       VOTE PASS
-  ════════════════════════════════ -->
-  <div class="screen" id="screen-vote-pass">
-    <div class="spacer"></div>
-    <div style="text-align:center">
-      <div style="font-size:58px;margin-bottom:14px">🗳️</div>
-      <h2>Vote enregistré</h2>
-      <div class="g12"></div>
-      <p id="vote-pass-text">Passe le téléphone au joueur suivant</p>
+    <div style="width:100%;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden">
+      <div id="ct-bar" style="height:100%;border-radius:2px;background:var(--purple);transition:width 1s linear,background 0.4s;width:100%"></div>
     </div>
-    <div class="spacer"></div>
-    <button class="btn btn-ghost" onclick="nextVoter()">Joueur suivant →</button>
+  </div>
+  <div class="g10"></div>
+  <div class="card" style="padding:13px">
+    <span class="label" style="display:block;margin-bottom:7px">Ordre de passage</span>
+    <div class="queue" id="ct-queue"></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="g14"></div>
+  <button class="btn btn-purple" id="ct-next-btn" onclick="ctNextRound()" style="display:none">Nouvelle règle · Tour suivant →</button>
+  <div class="g8" id="ct-gap" style="display:none"></div>
+  <button class="btn btn-ghost" onclick="goToVote()">Passer au vote →</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     VOTE INTRO
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-vote-intro">
+  <div class="spacer"></div>
+  <div class="progress-dots" id="vote-dots"></div>
+  <div class="g20"></div>
+  <span class="label">Phase de vote</span>
+  <div class="g10"></div>
+  <h2 id="vote-intro-player">Joueur 1</h2>
+  <div class="g8"></div>
+  <p>C'est ton tour de voter.<br>Prends le téléphone secrètement.</p>
+  <div class="spacer"></div>
+  <div class="card" style="text-align:center">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="rgba(240,238,232,0.18)" stroke-width="1.5" style="margin:0 auto 7px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p style="font-size:12px">Ton vote est secret.<br>Personne d'autre ne le verra.</p>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-danger" onclick="showVoteScreen()">Voter maintenant</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     VOTE
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-vote">
+  <span class="label" id="vote-player-label">Joueur 1 · Ton vote</span>
+  <div class="g10"></div>
+  <h2>Qui est l'imposteur ?</h2>
+  <div class="g14"></div>
+  <div class="vote-list" id="vote-list"></div>
+  <div class="spacer"></div>
+  <div class="g14"></div>
+  <button class="btn btn-primary" id="vote-confirm-btn" onclick="confirmVote()" disabled>Confirmer mon vote</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     VOTE PASS
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-vote-pass">
+  <div class="spacer"></div>
+  <div style="text-align:center">
+    <div style="font-size:54px;margin-bottom:12px">🗳️</div>
+    <h2>Vote enregistré</h2>
+    <div class="g10"></div>
+    <p id="vote-pass-text">Passe le téléphone au joueur suivant</p>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn btn-ghost" onclick="nextVoter()">Joueur suivant →</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     RESULTS  — fixed layout, no scroll
+══════════════════════════════════════════ -->
+<div class="screen" id="screen-results">
+  <div class="glow" style="width:200px;height:200px;background:rgba(255,77,109,0.07);top:-50px;left:-60px;"></div>
+
+  <!-- Header: label + title on one line -->
+  <div class="res-header">
+    <span class="label">Résultats finaux</span>
+    <div class="g6"></div>
+    <div class="res-title" id="res-title">La vérité éclate !</div>
   </div>
 
-  <!-- ════════════════════════════════
-       RESULTS
-  ════════════════════════════════ -->
-  <div class="screen" id="screen-results">
-    <div class="glow" style="width:280px;height:280px;background:rgba(255,77,109,0.07);top:-60px;left:-80px;"></div>
-    <span class="label">Résultats</span>
-    <div class="g12"></div>
-    <h2>La vérité<br>éclate !</h2>
-    <div class="g16"></div>
-    <div class="card">
-      <span class="label" style="display:block;margin-bottom:10px">L'imposteur était</span>
-      <div style="display:flex;align-items:center;gap:14px">
-        <div class="v-avatar" style="width:50px;height:50px;font-size:15px;background:var(--danger-dim);border:1.5px solid var(--danger)" id="result-imp-av"></div>
+  <!-- 5 flex rows filling all available height -->
+  <div class="res-grid">
+
+    <!-- 1. Impostor -->
+    <div class="res-card imp-card">
+      <span class="res-card-label">L'imposteur était</span>
+      <div class="res-imp-row">
+        <div class="res-avatar" id="result-imp-av"></div>
         <div>
-          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:19px" id="result-imp-name"></div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px" id="result-imp-score"></div>
+          <div class="res-imp-name" id="result-imp-name"></div>
+          <div class="res-imp-score" id="result-imp-score"></div>
         </div>
       </div>
     </div>
-    <div class="g12"></div>
-    <div class="card">
-      <span class="label" style="display:block;margin-bottom:6px">Le mot secret</span>
-      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--safe)" id="result-word"></div>
+
+    <!-- 2. Secret word -->
+    <div class="res-card">
+      <span class="res-card-label">Le mot secret</span>
+      <div class="res-word" id="result-word"></div>
     </div>
-    <div class="g12"></div>
-    <div class="card">
-      <span class="label" style="display:block;margin-bottom:10px">Votes</span>
-      <div class="res-list" id="result-vote-list"></div>
+
+    <!-- 3. Votes -->
+    <div class="res-card" style="flex:2">
+      <span class="res-card-label">Votes</span>
+      <div class="res-vote-list" id="result-vote-list"></div>
     </div>
-    <div class="g12"></div>
-    <div style="text-align:center"><div id="result-badge" class="win-badge team"></div></div>
-    <div class="g20"></div>
-    <button class="btn btn-primary" onclick="resetGame()">🔄 Rejouer</button>
-    <div class="g12"></div>
-    <button class="btn btn-ghost" onclick="goHome()">← Accueil</button>
-    <div class="g20"></div>
+
+    <!-- 4. Winner badge -->
+    <div class="res-card" style="align-items:center;justify-content:center;flex-direction:row">
+      <div id="result-badge" class="win-badge team"></div>
+    </div>
+
   </div>
+
+  <!-- 5. Action buttons -->
+  <div class="res-actions">
+    <button class="btn btn-primary" style="flex:1" onclick="resetGame()">🔄 Rejouer</button>
+    <button class="btn btn-ghost" style="flex:1" onclick="goHome()">← Accueil</button>
+  </div>
+</div>
 
 </div><!-- /app -->
 
 <script>
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 const G = {
-  playerCount: 4,
-  theme: 'libre',
-  gameMode: 'classic',           // 'libre' | 'classic' | 'contraintes'
-  playerNames: [],               // entered names
-  players: [],                   // resolved names used in game
-  impostorIndex: -1,
-  secretWord: '',
-  currentRevealIndex: 0,
-  currentVoteIndex: 0,
-  votes: {},
-  selectedVote: null,
-  roleTimerInt: null,
-  currentRound: 1,
-  maxRounds: 3,
-  // Libre
+  playerCount: 4, theme: 'libre', gameMode: 'classic',
+  playerNames: [], players: [],
+  impostorIndex: -1, secretWord: '',
+  currentRevealIndex: 0, currentVoteIndex: 0,
+  votes: {}, selectedVote: null,
+  roleTimerInt: null, currentRound: 1, maxRounds: 3,
   lbTimerInt: null, lbTimeLeft: 120, lbDuration: 120,
-  // Hot Seat
   hsCurrent: 0, hsTimerInt: null, hsTimeLeft: 15, hsDuration: 15,
-  // Contraintes
   ctTimerInt: null, ctTimeLeft: 60, ctDuration: 60, ctConstraint: null,
 };
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // DATA
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 const WORDS = {
   libre:   ['Forêt','Montagne','Plage','Étoile','Maison','Voiture','Livre','Musée','Jardin','Château','Robot','Fantôme','Diamant','Parapluie','Locomotive','Phare','Volcan','Arc-en-ciel','Boussole','Tramway'],
   sport:   ['Football','Tennis','Natation','Cyclisme','Judo','Escalade','Volleyball','Baseball','Surf','Ski','Escrime','Handball','Biathlon','Trampoline','Fléchettes'],
@@ -596,82 +745,101 @@ const WORDS = {
 };
 
 const CONTRAINTES = [
-  { emoji:'🎨', text:'Décris avec une couleur', sub:'Chaque indice doit être une couleur ou y faire référence directement.' },
-  { emoji:'🔊', text:'Décris avec un son', sub:'Ton indice doit évoquer un son, une onomatopée, une ambiance sonore.' },
-  { emoji:'😱', text:'Décris avec une émotion', sub:'Chaque joueur donne un indice sous forme d\'émotion ressentie.' },
-  { emoji:'🌡️', text:'Chaud ou froid ?', sub:'Ton indice doit seulement dire "chaud", "tiède", "froid" ou une nuance.' },
-  { emoji:'🐾', text:'Décris avec un animal', sub:'Donne un indice en citant ou en comparant à un animal.' },
-  { emoji:'🌍', text:'Décris avec un pays', sub:'Ton indice doit nommer ou évoquer un pays ou une culture.' },
-  { emoji:'👶', text:'Explique comme à un enfant', sub:'Simplifie au maximum. Zéro vocabulaire compliqué.' },
-  { emoji:'🔢', text:'Donne un chiffre seulement', sub:'Ton seul indice est un chiffre ou une quantité. Rien d\'autre.' },
-  { emoji:'🕐', text:'Situe dans le temps', sub:'Associe le mot à une époque : antiquité, futur, XXème siècle…' },
-  { emoji:'📏', text:'Grand ou petit ?', sub:'Décris uniquement la taille relative de l\'objet. Rien d\'autre.' },
-  { emoji:'💎', text:'Luxe ou banal ?', sub:'Positionne le mot sur l\'échelle du luxe. Un seul positionnement.' },
-  { emoji:'🌈', text:'Un seul mot autorisé', sub:'Chaque joueur ne peut prononcer qu\'un seul mot. Exactement un.' },
-  { emoji:'🧠', text:'Indice philosophique', sub:'Donne un indice abstrait, conceptuel, presque poétique.' },
-  { emoji:'🎭', text:'Sens interdit', sub:'Décris ce que le mot n\'est PAS. Uniquement en négatif.' },
-  { emoji:'🔗', text:'Associe à une célébrité', sub:'Compare le mot à une personne célèbre. Explique pourquoi.' },
+  {emoji:'🎨',text:'Décris avec une couleur',sub:'Chaque indice doit être une couleur ou y faire référence directement.'},
+  {emoji:'🔊',text:'Décris avec un son',sub:'Ton indice doit évoquer un son, une onomatopée, une ambiance sonore.'},
+  {emoji:'😱',text:'Décris avec une émotion',sub:'Chaque joueur donne un indice sous forme d\'émotion ressentie.'},
+  {emoji:'🌡️',text:'Chaud ou froid ?',sub:'Ton indice doit seulement dire "chaud", "tiède", "froid" ou une nuance.'},
+  {emoji:'🐾',text:'Décris avec un animal',sub:'Donne un indice en citant ou en comparant à un animal.'},
+  {emoji:'🌍',text:'Décris avec un pays',sub:'Ton indice doit nommer ou évoquer un pays ou une culture.'},
+  {emoji:'👶',text:'Explique comme à un enfant',sub:'Simplifie au maximum. Zéro vocabulaire compliqué.'},
+  {emoji:'🔢',text:'Donne un chiffre seulement',sub:'Ton seul indice est un chiffre ou une quantité. Rien d\'autre.'},
+  {emoji:'🕐',text:'Situe dans le temps',sub:'Associe le mot à une époque : antiquité, futur, XXème siècle…'},
+  {emoji:'📏',text:'Grand ou petit ?',sub:'Décris uniquement la taille relative de l\'objet. Rien d\'autre.'},
+  {emoji:'💎',text:'Luxe ou banal ?',sub:'Positionne le mot sur l\'échelle du luxe. Un seul positionnement.'},
+  {emoji:'🌈',text:'Un seul mot autorisé',sub:'Chaque joueur ne peut prononcer qu\'un seul mot. Exactement un.'},
+  {emoji:'🧠',text:'Indice philosophique',sub:'Donne un indice abstrait, conceptuel, presque poétique.'},
+  {emoji:'🎭',text:'Sens interdit',sub:'Décris ce que le mot n\'est PAS. Uniquement en négatif.'},
+  {emoji:'🔗',text:'Associe à une célébrité',sub:'Compare le mot à une personne célèbre. Explique pourquoi.'},
 ];
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // UTILS
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function getInitials(n) {
   if (!n) return '?';
-  const parts = n.trim().split(/\s+/);
-  return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : n.trim().slice(0,2).toUpperCase();
+  const p = n.trim().split(/\s+/);
+  return p.length >= 2 ? (p[0][0]+p[1][0]).toUpperCase() : n.trim().slice(0,2).toUpperCase();
 }
 function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id)); }
 function vibrate(ms=30) { if(navigator.vibrate) navigator.vibrate(ms); }
-function blank(cb) { const o=document.getElementById('blank-overlay'); o.classList.add('show'); setTimeout(()=>{ o.classList.remove('show'); cb(); }, 460); }
-function fmtTime(s) { const m=Math.floor(s/60); const sec=s%60; return `${m}:${sec.toString().padStart(2,'0')}` }
+function blank(cb) { const o=document.getElementById('blank-overlay'); o.classList.add('show'); setTimeout(()=>{ o.classList.remove('show'); cb(); },450); }
+function fmtTime(s) { const m=Math.floor(s/60); return `${m}:${(s%60).toString().padStart(2,'0')}`; }
 
-// ═══════════════════════════════════════════════
-// HOME — PLAYER NAMES
-// ═══════════════════════════════════════════════
-function buildNameInputs() {
+// ════════════════════════════════════════════
+// POPUP — player names
+// ════════════════════════════════════════════
+function openNamesPopup() {
+  // Build inputs for current count
+  while (G.playerNames.length < G.playerCount) G.playerNames.push('');
+  G.playerNames = G.playerNames.slice(0, G.playerCount);
   const container = document.getElementById('name-inputs');
   container.innerHTML = '';
-  const count = G.playerCount;
-  // Preserve existing names
-  while (G.playerNames.length < count) G.playerNames.push('');
-  G.playerNames = G.playerNames.slice(0, count);
-
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < G.playerCount; i++) {
     const row = document.createElement('div');
     row.className = 'name-row';
-    row.innerHTML = `
-      <span class="name-num">${i+1}</span>
-      <input class="name-input" type="text" maxlength="14" placeholder="Prénom du joueur ${i+1}"
+    row.innerHTML = `<span class="name-num">${i+1}</span>
+      <input class="name-input" type="text" maxlength="12" placeholder="Joueur ${i+1}"
         value="${G.playerNames[i]}"
         oninput="G.playerNames[${i}]=this.value.trim()"
         autocomplete="off" autocorrect="off" spellcheck="false">`;
     container.appendChild(row);
   }
+  document.getElementById('popup-overlay').classList.add('open');
+  // Focus first empty input
+  setTimeout(() => {
+    const inputs = container.querySelectorAll('.name-input');
+    const first = [...inputs].find(i => !i.value);
+    if (first) first.focus();
+  }, 380);
 }
 
+function closePopup() {
+  document.getElementById('popup-overlay').classList.remove('open');
+}
+
+function popupBgClick(e) {
+  if (e.target === document.getElementById('popup-overlay')) closePopup();
+}
+
+function closePopupAndStart() {
+  // Sync values
+  document.querySelectorAll('.name-input').forEach((inp, i) => { G.playerNames[i] = inp.value.trim(); });
+  closePopup();
+  setTimeout(startGame, 350);
+}
+
+// ════════════════════════════════════════════
+// HOME
+// ════════════════════════════════════════════
 function changeCount(d) {
   G.playerCount = Math.max(3, Math.min(12, G.playerCount + d));
   document.getElementById('player-count-display').textContent = G.playerCount;
   document.getElementById('btn-minus').disabled = G.playerCount <= 3;
-  document.getElementById('btn-plus').disabled = G.playerCount >= 12;
-  buildNameInputs();
+  document.getElementById('btn-plus').disabled  = G.playerCount >= 12;
   vibrate(15);
 }
 
-// ═══════════════════════════════════════════════
-// HOME — MODE / THEME
-// ═══════════════════════════════════════════════
 function selectMode(mode) {
   G.gameMode = mode;
-  const modes = ['libre','classic','contraintes'];
-  const colors = { libre:'col-orange', classic:'col-accent', contraintes:'col-purple' };
-  const selCls = { libre:'sel-libre', classic:'sel-classic', contraintes:'sel-contraintes' };
-  modes.forEach(m => {
-    document.getElementById(`mc-${m}`).className = 'mode-card' + (m === mode ? ` ${selCls[m]}` : '');
-    const mt = document.getElementById(`mt-${m}`);
-    mt.className = 'mode-title' + (m === mode ? ` ${colors[m]}` : '');
+  const cfg = {
+    libre:       {sel:'sel-libre',       col:'col-orange'},
+    classic:     {sel:'sel-classic',     col:'col-accent'},
+    contraintes: {sel:'sel-contraintes', col:'col-purple'},
+  };
+  ['libre','classic','contraintes'].forEach(m => {
+    document.getElementById(`mc-${m}`).className = 'mode-card' + (m===mode ? ` ${cfg[m].sel}` : '');
+    document.getElementById(`mt-${m}`).className = 'mode-title' + (m===mode ? ` ${cfg[m].col}` : '');
   });
   vibrate(20);
 }
@@ -681,17 +849,12 @@ function selectTheme(el, theme) {
   el.classList.add('selected'); G.theme = theme; vibrate(15);
 }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // START GAME
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 function startGame() {
-  // Sync any typed values (inputs may not have fired oninput if JS was fast)
-  document.querySelectorAll('.name-input').forEach((inp, i) => {
-    G.playerNames[i] = inp.value.trim();
-  });
-  // Resolve names: fallback to "Joueur N" if blank
   G.players = Array.from({length: G.playerCount}, (_, i) =>
-    G.playerNames[i] ? G.playerNames[i] : `Joueur ${i+1}`
+    (G.playerNames[i] && G.playerNames[i].length) ? G.playerNames[i] : `Joueur ${i+1}`
   );
   G.impostorIndex = Math.floor(Math.random() * G.playerCount);
   G.secretWord = rand(WORDS[G.theme] || WORDS.libre);
@@ -700,16 +863,14 @@ function startGame() {
   setupRevealIntro();
 }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // REVEAL
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 function buildDots(id, total, cur) {
   const c = document.getElementById(id); c.innerHTML = '';
-  // Max 10 dots visible to avoid overflow
-  const show = Math.min(total, 10);
-  for(let i=0;i<show;i++) {
-    const d=document.createElement('div');
-    d.className='dot'+(i<cur?' done':i===cur?' active':'');
+  for(let i=0; i<Math.min(total,10); i++) {
+    const d = document.createElement('div');
+    d.className = 'dot'+(i<cur?' done':i===cur?' active':'');
     c.appendChild(d);
   }
 }
@@ -726,8 +887,16 @@ function showRole() {
   vibrate(30);
   const isImp = G.currentRevealIndex === G.impostorIndex;
   document.getElementById('role-box-container').innerHTML = isImp
-    ? `<div class="role-box impostor pop"><div class="rl">⚠️ TU ES L'IMPOSTEUR</div><div class="rv">IMPOSTEUR</div><div class="role-sub">Écoute bien les autres, ils connaissent le mot.<br>Blends-toi !</div></div>`
-    : `<div class="role-box word pop"><div class="rl">🟢 Mot secret</div><div class="rv">${G.secretWord}</div><div class="role-sub">Donne des indices sans trop en dire.<br>L'imposteur t'observe.</div></div>`;
+    ? `<div class="role-box impostor pop">
+        <div class="rl">⚠️ TU ES L'IMPOSTEUR</div>
+        <div class="rv">IMPOSTEUR</div>
+        <div class="role-sub">Écoute les autres, ils connaissent le mot.<br>Blends-toi !</div>
+       </div>`
+    : `<div class="role-box word pop">
+        <div class="rl">🟢 Mot secret</div>
+        <div class="rv">${G.secretWord}</div>
+        <div class="role-sub">Donne des indices sans trop en dire.<br>L'imposteur t'observe.</div>
+       </div>`;
   startRoleTimer(5);
   showScreen('screen-role');
 }
@@ -735,9 +904,12 @@ function showRole() {
 function startRoleTimer(sec) {
   clearInterval(G.roleTimerInt);
   let left = sec;
-  const arc = document.getElementById('role-timer-arc'), txt = document.getElementById('role-timer-text'), C = 314.2;
+  const arc = document.getElementById('role-timer-arc');
+  const txt = document.getElementById('role-timer-text');
+  const C = 276.5; // 2π × 44
   function tick() {
-    txt.textContent = left; txt.classList.remove('count-anim'); void txt.offsetWidth; txt.classList.add('count-anim');
+    txt.textContent = left;
+    txt.classList.remove('count-anim'); void txt.offsetWidth; txt.classList.add('count-anim');
     arc.style.strokeDashoffset = C * (1 - left/sec);
     arc.style.stroke = left <= 2 ? 'var(--danger)' : 'var(--accent)';
     if (left <= 0) { clearInterval(G.roleTimerInt); afterRole(); return; }
@@ -760,34 +932,32 @@ function nextPlayer() {
   blank(() => setupRevealIntro());
 }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // DISCUSSION ROUTER
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 function startDiscussion() {
   if (G.gameMode === 'libre') startLibre();
   else if (G.gameMode === 'classic') startHotSeat();
   else startContraintes();
 }
 
-// ═══════════════════════════════════════════════
-// LIBRE MODE — 2min timer
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
+// LIBRE MODE
+// ════════════════════════════════════════════
 function startLibre() {
   clearInterval(G.lbTimerInt);
   G.lbTimeLeft = G.lbDuration;
   document.getElementById('lb-round-label').textContent = `Tour ${G.currentRound} · ${G.maxRounds}`;
-
   const hasMore = G.currentRound < G.maxRounds;
   document.getElementById('lb-next-btn').style.display = hasMore ? 'flex' : 'none';
-  document.getElementById('lb-gap').style.display = hasMore ? 'block' : 'none';
-
-  buildLbQueue();
+  document.getElementById('lb-gap').style.display      = hasMore ? 'block' : 'none';
+  buildSimpleQueue('lb-queue');
   showScreen('screen-libre');
   runLbTimer();
 }
 
-function buildLbQueue() {
-  const q = document.getElementById('lb-queue'); q.innerHTML = '';
+function buildSimpleQueue(id) {
+  const q = document.getElementById(id); q.innerHTML = '';
   G.players.forEach((name, i) => {
     const el = document.createElement('div');
     el.className = 'q-row';
@@ -797,21 +967,19 @@ function buildLbQueue() {
 }
 
 function runLbTimer() {
-  clearInterval(G.lbTimerInt);
-  updateLbDisplay();
+  clearInterval(G.lbTimerInt); updateLbDisplay();
   G.lbTimerInt = setInterval(() => {
-    G.lbTimeLeft--;
-    updateLbDisplay();
+    G.lbTimeLeft--; updateLbDisplay();
     if (G.lbTimeLeft <= 0) { clearInterval(G.lbTimerInt); vibrate([100,50,100]); }
   }, 1000);
 }
 
 function updateLbDisplay() {
-  const left = Math.max(0, G.lbTimeLeft);
+  const l = Math.max(0, G.lbTimeLeft);
   const el = document.getElementById('lb-secs');
-  el.textContent = fmtTime(left);
-  el.classList.toggle('urgent', left <= 20);
-  const pct = (left / G.lbDuration) * 100;
+  el.textContent = fmtTime(l);
+  el.classList.toggle('urgent', l <= 20);
+  const pct = (l / G.lbDuration) * 100;
   const bar = document.getElementById('lb-bar');
   bar.style.width = pct + '%';
   bar.style.background = pct < 20 ? 'var(--danger)' : pct < 40 ? 'var(--accent)' : 'var(--orange)';
@@ -819,20 +987,18 @@ function updateLbDisplay() {
 
 function lbNextRound() {
   vibrate(20); clearInterval(G.lbTimerInt);
-  G.currentRound++; G.lbTimeLeft = G.lbDuration;
-  startLibre();
+  G.currentRound++; G.lbTimeLeft = G.lbDuration; startLibre();
 }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // HOT SEAT MODE
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 function startHotSeat() {
-  clearInterval(G.hsTimerInt);
-  G.hsCurrent = 0;
+  clearInterval(G.hsTimerInt); G.hsCurrent = 0;
   document.getElementById('hs-round-label').textContent = `Tour ${G.currentRound} · ${G.maxRounds}`;
-  document.getElementById('hs-title').textContent = G.currentRound === 1 ? 'À toi\nde parler !' : 'Round\nsuivant !';
+  document.getElementById('hs-title').textContent = G.currentRound === 1 ? 'À toi de parler !' : 'Round suivant !';
   document.getElementById('hs-vote-btn').style.display = 'none';
-  document.getElementById('hs-gap2').style.display = 'none';
+  document.getElementById('hs-gap2').style.display     = 'none';
   const skipBtn = document.getElementById('hs-skip-btn');
   skipBtn.style.display = 'flex'; skipBtn.textContent = 'Joueur suivant →'; skipBtn.onclick = hsSkip;
   buildHsQueue(); showScreen('screen-hotseat'); hsStartTimer();
@@ -842,43 +1008,40 @@ function buildHsQueue() {
   const q = document.getElementById('hs-queue'); q.innerHTML = '';
   G.players.forEach((name, i) => {
     const el = document.createElement('div');
-    el.className = 'q-row' + (i === G.hsCurrent ? ' current' : i < G.hsCurrent ? ' done' : '');
     el.id = `qr-${i}`;
+    el.className = 'q-row'+(i===G.hsCurrent?' current':i<G.hsCurrent?' done':'');
     el.innerHTML = `<span class="q-num">${i+1}</span><span class="q-name">${name}</span>`
-      + (i === G.hsCurrent ? `<span class="q-tag pulse">EN COURS</span>` : i < G.hsCurrent ? `<span style="font-size:13px">✓</span>` : '');
+      +(i===G.hsCurrent?`<span class="q-tag pulse">EN COURS</span>`:i<G.hsCurrent?`<span style="font-size:13px">✓</span>`:'');
     q.appendChild(el);
   });
 }
 
 function hsUpdateQueue() {
   G.players.forEach((name, i) => {
-    const row = document.getElementById(`qr-${i}`); if (!row) return;
-    row.className = 'q-row' + (i === G.hsCurrent ? ' current' : i < G.hsCurrent ? ' done' : '');
+    const row = document.getElementById(`qr-${i}`); if(!row) return;
+    row.className = 'q-row'+(i===G.hsCurrent?' current':i<G.hsCurrent?' done':'');
     row.innerHTML = `<span class="q-num">${i+1}</span><span class="q-name">${name}</span>`
-      + (i === G.hsCurrent ? `<span class="q-tag pulse">EN COURS</span>` : i < G.hsCurrent ? `<span style="font-size:13px">✓</span>` : '');
+      +(i===G.hsCurrent?`<span class="q-tag pulse">EN COURS</span>`:i<G.hsCurrent?`<span style="font-size:13px">✓</span>`:'');
   });
 }
 
 function hsStartTimer() {
-  clearInterval(G.hsTimerInt);
-  G.hsTimeLeft = G.hsDuration;
+  clearInterval(G.hsTimerInt); G.hsTimeLeft = G.hsDuration;
   const outer = document.getElementById('hs-ring-outer');
-  const arc = document.getElementById('hs-arc');
-  const avatar = document.getElementById('hs-avatar');
-  const secs = document.getElementById('hs-secs');
-  const C = 477.5;
-
+  const arc   = document.getElementById('hs-arc');
+  const avatar= document.getElementById('hs-avatar');
+  const secs  = document.getElementById('hs-secs');
+  const C = 439.8; // 2π × 70
   avatar.textContent = getInitials(G.players[G.hsCurrent]);
   avatar.style.background = 'var(--accent-dim)'; avatar.style.borderColor = 'var(--accent)';
   arc.style.stroke = 'var(--accent)'; arc.style.strokeDashoffset = '0';
   outer.classList.remove('ring-urgent');
-
   function tick() {
-    secs.textContent = G.hsTimeLeft + 's';
+    secs.textContent = G.hsTimeLeft+'s';
     secs.classList.remove('count-anim'); void secs.offsetWidth; secs.classList.add('count-anim');
-    arc.style.strokeDashoffset = C * (1 - G.hsTimeLeft / G.hsDuration);
-    if (G.hsTimeLeft <= 5) { arc.style.stroke = 'var(--danger)'; outer.classList.add('ring-urgent'); if(G.hsTimeLeft>0) vibrate(10); }
-    if (G.hsTimeLeft <= 0) { clearInterval(G.hsTimerInt); vibrate([60,30,60]); hsAdvance(); return; }
+    arc.style.strokeDashoffset = C*(1 - G.hsTimeLeft/G.hsDuration);
+    if(G.hsTimeLeft<=5){ arc.style.stroke='var(--danger)'; outer.classList.add('ring-urgent'); if(G.hsTimeLeft>0) vibrate(10); }
+    if(G.hsTimeLeft<=0){ clearInterval(G.hsTimerInt); vibrate([60,30,60]); hsAdvance(); return; }
     G.hsTimeLeft--;
   }
   tick(); G.hsTimerInt = setInterval(tick, 1000);
@@ -888,72 +1051,58 @@ function hsSkip() { vibrate(20); clearInterval(G.hsTimerInt); hsAdvance(); }
 
 function hsAdvance() {
   G.hsCurrent++;
-  if (G.hsCurrent >= G.playerCount) {
+  if(G.hsCurrent >= G.playerCount) {
     hsUpdateQueue();
     document.getElementById('hs-ring-outer').classList.remove('ring-urgent');
-    document.getElementById('hs-arc').style.strokeDashoffset = 477.5;
+    document.getElementById('hs-arc').style.strokeDashoffset = 439.8;
     const av = document.getElementById('hs-avatar');
-    av.textContent = '✓'; av.style.background = 'var(--safe-dim)'; av.style.borderColor = 'var(--safe)';
+    av.textContent='✓'; av.style.background='var(--safe-dim)'; av.style.borderColor='var(--safe)';
     document.getElementById('hs-secs').textContent = 'Terminé !';
-    document.getElementById('hs-title').textContent = 'Round\nterminé !';
+    document.getElementById('hs-title').textContent = 'Round terminé !';
     document.getElementById('hs-vote-btn').style.display = 'flex';
-    document.getElementById('hs-gap2').style.display = 'block';
-    if (G.currentRound < G.maxRounds) {
-      const skipBtn = document.getElementById('hs-skip-btn');
-      skipBtn.style.display = 'flex'; skipBtn.textContent = 'Tour suivant →'; skipBtn.onclick = hsNextRound;
-    } else {
-      document.getElementById('hs-skip-btn').style.display = 'none';
-      document.getElementById('hs-gap2').style.display = 'none';
-    }
+    document.getElementById('hs-gap2').style.display     = 'block';
+    if(G.currentRound < G.maxRounds) {
+      const s = document.getElementById('hs-skip-btn');
+      s.style.display='flex'; s.textContent='Tour suivant →'; s.onclick=hsNextRound;
+    } else { document.getElementById('hs-skip-btn').style.display='none'; document.getElementById('hs-gap2').style.display='none'; }
   } else { hsUpdateQueue(); hsStartTimer(); }
 }
 
-function hsNextRound() { vibrate(20); G.currentRound++; G.hsCurrent = 0; startHotSeat(); }
+function hsNextRound() { vibrate(20); G.currentRound++; G.hsCurrent=0; startHotSeat(); }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // CONTRAINTES MODE
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 function startContraintes() {
-  clearInterval(G.ctTimerInt);
-  G.ctTimeLeft = G.ctDuration;
+  clearInterval(G.ctTimerInt); G.ctTimeLeft = G.ctDuration;
   G.ctConstraint = rand(CONTRAINTES);
   document.getElementById('ct-round-label').textContent = `Tour ${G.currentRound} · ${G.maxRounds}`;
   document.getElementById('ct-emoji').textContent = G.ctConstraint.emoji;
-  document.getElementById('ct-text').textContent = G.ctConstraint.text;
-  document.getElementById('ct-sub').textContent = G.ctConstraint.sub;
+  document.getElementById('ct-text').textContent  = G.ctConstraint.text;
+  document.getElementById('ct-sub').textContent   = G.ctConstraint.sub;
   const card = document.getElementById('ct-card');
   card.classList.remove('pop'); void card.offsetWidth; card.classList.add('pop');
   const hasMore = G.currentRound < G.maxRounds;
   document.getElementById('ct-next-btn').style.display = hasMore ? 'flex' : 'none';
-  document.getElementById('ct-gap').style.display = hasMore ? 'block' : 'none';
-  buildCtQueue(); showScreen('screen-contraintes'); runCtTimer();
-}
-
-function buildCtQueue() {
-  const q = document.getElementById('ct-queue'); q.innerHTML = '';
-  G.players.forEach((name, i) => {
-    const el = document.createElement('div');
-    el.className = 'q-row';
-    el.innerHTML = `<span class="q-num">${i+1}</span><span class="q-name">${name}</span>`;
-    q.appendChild(el);
-  });
+  document.getElementById('ct-gap').style.display      = hasMore ? 'block' : 'none';
+  buildSimpleQueue('ct-queue'); showScreen('screen-contraintes'); runCtTimer();
 }
 
 function runCtTimer() {
   clearInterval(G.ctTimerInt); updateCtDisplay();
   G.ctTimerInt = setInterval(() => {
     G.ctTimeLeft--; updateCtDisplay();
-    if (G.ctTimeLeft <= 0) { clearInterval(G.ctTimerInt); vibrate([100,50,100]); }
+    if(G.ctTimeLeft<=0){ clearInterval(G.ctTimerInt); vibrate([100,50,100]); }
   }, 1000);
 }
 
 function updateCtDisplay() {
   const l = Math.max(0, G.ctTimeLeft);
   document.getElementById('ct-timer-label').textContent = `${l}s`;
-  const pct = (l / G.ctDuration) * 100;
+  const pct = (l/G.ctDuration)*100;
   const bar = document.getElementById('ct-bar');
-  bar.style.width = pct + '%';
-  bar.style.background = pct < 25 ? 'var(--danger)' : 'var(--purple)';
+  bar.style.width = pct+'%';
+  bar.style.background = pct<25 ? 'var(--danger)' : 'var(--purple)';
 }
 
 function ctNextRound() {
@@ -961,11 +1110,12 @@ function ctNextRound() {
   G.currentRound++; G.ctTimeLeft = G.ctDuration; startContraintes();
 }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // VOTE
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 function goToVote() {
-  vibrate(30); clearInterval(G.lbTimerInt); clearInterval(G.hsTimerInt); clearInterval(G.ctTimerInt);
+  vibrate(30);
+  clearInterval(G.lbTimerInt); clearInterval(G.hsTimerInt); clearInterval(G.ctTimerInt);
   G.currentVoteIndex = 0; setupVoteIntro();
 }
 
@@ -983,13 +1133,14 @@ function showVoteScreen() {
   document.getElementById('vote-confirm-btn').disabled = true;
   const list = document.getElementById('vote-list'); list.innerHTML = '';
   G.players.forEach((name, i) => {
-    if (i === idx) return;
+    if(i===idx) return;
     const el = document.createElement('div');
     el.className = 'vote-item';
-    el.innerHTML = `<div class="v-avatar">${getInitials(name)}</div><span class="v-name">${name}</span><div class="v-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>`;
+    el.innerHTML = `<div class="v-avatar">${getInitials(name)}</div><span class="v-name">${name}</span>
+      <div class="v-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>`;
     el.addEventListener('click', () => {
       vibrate(20);
-      document.querySelectorAll('.vote-item').forEach(v => v.classList.remove('selected'));
+      document.querySelectorAll('.vote-item').forEach(v=>v.classList.remove('selected'));
       el.classList.add('selected'); G.selectedVote = i;
       document.getElementById('vote-confirm-btn').disabled = false;
     });
@@ -999,70 +1150,72 @@ function showVoteScreen() {
 }
 
 function confirmVote() {
-  if (G.selectedVote === null) return;
+  if(G.selectedVote===null) return;
   vibrate(40); G.votes[G.currentVoteIndex] = G.selectedVote;
-  if (G.currentVoteIndex + 1 < G.playerCount) {
-    document.getElementById('vote-pass-text').textContent = `Passe le téléphone à ${G.players[G.currentVoteIndex + 1]}`;
+  if(G.currentVoteIndex+1 < G.playerCount) {
+    document.getElementById('vote-pass-text').textContent = `Passe le téléphone à ${G.players[G.currentVoteIndex+1]}`;
     blank(() => showScreen('screen-vote-pass'));
-  } else { blank(() => showResults()); }
+  } else blank(() => showResults());
 }
 
 function nextVoter() { vibrate(20); G.currentVoteIndex++; setupVoteIntro(); }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // RESULTS
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 function showResults() {
   const vc = {}; G.players.forEach((_,i) => vc[i]=0);
-  Object.values(G.votes).forEach(v => { vc[v] = (vc[v]||0) + 1; });
-  const impName = G.players[G.impostorIndex], impVotes = vc[G.impostorIndex]||0;
-  document.getElementById('result-imp-av').textContent = getInitials(impName);
-  document.getElementById('result-imp-name').textContent = impName;
-  document.getElementById('result-imp-score').textContent = `${impVotes} vote${impVotes!==1?'s':''} contre lui`;
-  document.getElementById('result-word').textContent = G.secretWord;
+  Object.values(G.votes).forEach(v => { vc[v]=(vc[v]||0)+1; });
 
+  const impName  = G.players[G.impostorIndex];
+  const impVotes = vc[G.impostorIndex]||0;
+
+  document.getElementById('result-imp-av').textContent    = getInitials(impName);
+  document.getElementById('result-imp-name').textContent  = impName;
+  document.getElementById('result-imp-score').textContent = `${impVotes} vote${impVotes!==1?'s':''} contre lui`;
+  document.getElementById('result-word').textContent      = G.secretWord;
+
+  // Vote list — sorted by votes desc
   const list = document.getElementById('result-vote-list'); list.innerHTML = '';
+  const maxV = G.playerCount > 1 ? G.playerCount - 1 : 1;
   G.players.map((name,i)=>({name,i,votes:vc[i]||0})).sort((a,b)=>b.votes-a.votes).forEach(({name,i,votes}) => {
     const isImp = i === G.impostorIndex;
-    const pct = G.playerCount > 1 ? (votes/(G.playerCount-1))*100 : 0;
-    const el = document.createElement('div');
-    el.className = 'res-row' + (isImp ? ' imp' : '');
+    const pct   = (votes/maxV)*100;
+    const el    = document.createElement('div');
+    el.className = 'res-vote-row';
     el.innerHTML = `
-      <div class="v-avatar" style="${isImp?'background:var(--danger-dim);border:1.5px solid var(--danger)':''}">${getInitials(name)}</div>
-      <div style="flex:1">
-        <div style="font-family:Syne,sans-serif;font-weight:700;font-size:13px;display:flex;align-items:center;gap:5px">
-          ${name}${isImp?'<span style="font-size:9px;color:var(--danger);font-weight:800;letter-spacing:.06em">IMPOSTEUR</span>':''}
-        </div>
-        <div class="res-bar-wrap"><div class="res-bar" style="width:0%;background:${isImp?'var(--danger)':'rgba(240,238,232,0.18)'}"></div></div>
-      </div>
-      <span class="res-votes">${votes}</span>`;
+      <div class="res-v-av${isImp?' imp':''}">${getInitials(name)}</div>
+      <span class="res-v-name">${name}${isImp?' 🕵️':''}</span>
+      <div class="res-bar-wrap"><div class="res-bar" style="width:0%;background:${isImp?'var(--danger)':'rgba(240,238,232,0.22)'}"></div></div>
+      <span class="res-v-count">${votes}</span>`;
     list.appendChild(el);
-    setTimeout(() => { el.querySelector('.res-bar').style.width = pct + '%'; }, 100);
+    setTimeout(() => { el.querySelector('.res-bar').style.width = pct+'%'; }, 80);
   });
 
-  const maxV = Math.max(...Object.values(vc));
-  const topVoted = Object.entries(vc).filter(([,v])=>v===maxV).map(([k])=>parseInt(k));
-  const caught = topVoted.length === 1 && topVoted[0] === G.impostorIndex;
-  const badge = document.getElementById('result-badge');
-  badge.className = 'win-badge ' + (caught ? 'team' : 'imp');
+  // Winner
+  const topVoted = Object.entries(vc).filter(([,v])=>v===Math.max(...Object.values(vc))).map(([k])=>parseInt(k));
+  const caught   = topVoted.length===1 && topVoted[0]===G.impostorIndex;
+  const badge    = document.getElementById('result-badge');
+  badge.className = 'win-badge '+(caught?'team':'imp');
   badge.innerHTML = caught ? '🎉 Les joueurs gagnent !' : '😈 L\'imposteur gagne !';
+
   showScreen('screen-results');
 }
 
-function resetGame() { vibrate(30); G.currentRound = 1; startGame(); }
+function resetGame() { vibrate(30); G.currentRound=1; startGame(); }
 function goHome() {
-  vibrate(20); clearInterval(G.lbTimerInt); clearInterval(G.hsTimerInt);
+  vibrate(20);
+  clearInterval(G.lbTimerInt); clearInterval(G.hsTimerInt);
   clearInterval(G.ctTimerInt); clearInterval(G.roleTimerInt);
   showScreen('screen-home');
 }
 
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════
+// ════════════════════════════════════════════
 document.getElementById('btn-minus').disabled = true;
 G.playerNames = Array(G.playerCount).fill('');
-buildNameInputs();
-selectMode('classic'); // default selected state
+selectMode('classic');
 </script>
 </body>
 </html>
